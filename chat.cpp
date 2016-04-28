@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 
   int buffer_size = 8;
   char buffer[buffer_size];
+  char bufferTemp[buffer_size];
 
   struct sockaddr_in serv_addr, cli_addr;
   //n -> num of characters read/written
@@ -107,12 +108,19 @@ int main(int argc, char *argv[])
         else {
           printf("%s: ", name_chatmate);
           do {
-            printf("%s", buffer);
-//            for (int x = 0; x < buffer_size-1; x++) {
-//              if (buffer[x])
-//              printf("%c", buffer[x]);
+//            printf("%s", buffer);
+            n = recv(newsockfd, bufferTemp, buffer_size-1, MSG_DONTWAIT);
+
+//            printf("\nbreak\n");
+            for (int x = 0; x < buffer_size-1; x++) {
+              printf("%c", buffer[x]);
+              if (buffer[x] == '\n' && n > 0)
+                printf("%s: ", name_chatmate);
             }
-          } while (recv(newsockfd, buffer, buffer_size-1, MSG_DONTWAIT) > 0);
+
+            strncpy(buffer, bufferTemp, buffer_size);
+//            buffer = bufferTemp;
+          } while (n > 0);
         }
       } else {
         while (true) {
