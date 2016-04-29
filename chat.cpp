@@ -163,7 +163,14 @@ int main(int argc, char *argv[])
         while (true) {
           //already takes care of overflow
           //keeps on sending until input is consumed
-          send(newsockfd, buffer, buffer_size - 1, 0);
+          n = send(newsockfd, buffer, buffer_size - 1, 0);
+          printf("%d\n", n);
+          if (n == 0) {
+            close(newsockfd);
+            if (argc == 2)
+              close(sockfd);
+            exit(0);
+          }
 
           for (int x = 0; x < buffer_size; x++) {
             if (buffer[x] == '\n')
